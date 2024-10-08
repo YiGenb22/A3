@@ -15,9 +15,9 @@ var router = express.Router();
  */
 router.get("/fundraisers", (req, res) => {
   connection.query(
-    "SELECT f.*, c.NAME AS CATEGORY_NAME " + 
-    "FROM FUNDRAISER f " + 
-    "JOIN CATEGORY c ON f.CATEGORY_ID = c.CATEGORY_ID " + 
+    "SELECT f.*, c.NAME AS CATEGORY_NAME " +
+    "FROM FUNDRAISER f " +
+    "JOIN CATEGORY c ON f.CATEGORY_ID = c.CATEGORY_ID " +
     "WHERE f.ACTIVE = true",
     (err, records, fields) => {
       if (err) {
@@ -56,68 +56,68 @@ router.get("/category", (req, res) => {
 router.get("/search", (req, res) => {
   // Search organizer
   if (!req.query.CITY && !req.query.CATEGORY_NAME) {
-    var query = "SELECT f.*, c.NAME AS CATEGORY_NAME " + 
-                "FROM FUNDRAISER f " + 
-                "JOIN CATEGORY c ON f.CATEGORY_ID = c.CATEGORY_ID " + 
-                "WHERE f.ACTIVE = true " +  
-                "AND f.ORGANIZER = ?";
+    var query = "SELECT f.*, c.NAME AS CATEGORY_NAME " +
+      "FROM FUNDRAISER f " +
+      "JOIN CATEGORY c ON f.CATEGORY_ID = c.CATEGORY_ID " +
+      "WHERE f.ACTIVE = true " +
+      "AND f.ORGANIZER = ?";
     var parameters = [req.query.ORGANIZER];
     // Search city
   } else if (!req.query.ORGANIZER && !req.query.CATEGORY_NAME) {
-    var query = "SELECT f.*, c.NAME AS CATEGORY_NAME " + 
-                "FROM FUNDRAISER f " + 
-                "JOIN CATEGORY c ON f.CATEGORY_ID = c.CATEGORY_ID " + 
-                "WHERE f.ACTIVE = true " + 
-                "AND f.CITY = ?";
+    var query = "SELECT f.*, c.NAME AS CATEGORY_NAME " +
+      "FROM FUNDRAISER f " +
+      "JOIN CATEGORY c ON f.CATEGORY_ID = c.CATEGORY_ID " +
+      "WHERE f.ACTIVE = true " +
+      "AND f.CITY = ?";
     var parameters = [req.query.CITY];
 
     // Search category
   } else if (!req.query.ORGANIZER && !req.query.CITY) {
-    var query = "SELECT f.*, c.NAME AS CATEGORY_NAME " + 
-                "FROM FUNDRAISER f " + 
-                "JOIN CATEGORY c ON f.CATEGORY_ID = c.CATEGORY_ID " + 
-                "WHERE f.ACTIVE = true " +  
-                "AND c.NAME = ?";
+    var query = "SELECT f.*, c.NAME AS CATEGORY_NAME " +
+      "FROM FUNDRAISER f " +
+      "JOIN CATEGORY c ON f.CATEGORY_ID = c.CATEGORY_ID " +
+      "WHERE f.ACTIVE = true " +
+      "AND c.NAME = ?";
     var parameters = [req.query.CATEGORY_NAME];
 
 
     // Search organizer, city
   } else if (!req.query.CATEGORY_NAME) {
-    var query = "SELECT f.*, c.NAME AS CATEGORY_NAME " + 
-                "FROM FUNDRAISER f " + 
-                "JOIN CATEGORY c ON f.CATEGORY_ID = c.CATEGORY_ID " + 
-                "WHERE f.ACTIVE = true " + 
-                "AND f.ORGANIZER = ? " +  
-                "AND f.CITY = ?";
+    var query = "SELECT f.*, c.NAME AS CATEGORY_NAME " +
+      "FROM FUNDRAISER f " +
+      "JOIN CATEGORY c ON f.CATEGORY_ID = c.CATEGORY_ID " +
+      "WHERE f.ACTIVE = true " +
+      "AND f.ORGANIZER = ? " +
+      "AND f.CITY = ?";
     var parameters = [req.query.ORGANIZER, req.query.CITY];
     // Search organizer, category
   } else if (!req.query.CITY) {
-    var query = "SELECT f.*, c.NAME AS CATEGORY_NAME " + 
-                "FROM FUNDRAISER f " + 
-                "JOIN CATEGORY c ON f.CATEGORY_ID = c.CATEGORY_ID " + 
-                "WHERE f.ACTIVE = true " +  
-                "AND f.ORGANIZER = ? " +  
-                "AND c.NAME = ?";
+    var query = "SELECT f.*, c.NAME AS CATEGORY_NAME " +
+      "FROM FUNDRAISER f " +
+      "JOIN CATEGORY c ON f.CATEGORY_ID = c.CATEGORY_ID " +
+      "WHERE f.ACTIVE = true " +
+      "AND f.ORGANIZER = ? " +
+      "AND c.NAME = ?";
     var parameters = [req.query.ORGANIZER, req.query.CATEGORY_NAME];
     // Search city, category
   } else if (!req.query.ORGANIZER) {
-    var query = "SELECT f.*, c.NAME AS CATEGORY_NAME " + 
-                "FROM FUNDRAISER f " + 
-                "JOIN CATEGORY c ON f.CATEGORY_ID = c.CATEGORY_ID " + 
-                "WHERE f.ACTIVE = true " + 
-                "AND f.CITY = ? " +  
-                "AND c.NAME = ?";
+    var query = "SELECT f.*, c.NAME AS CATEGORY_NAME " +
+      "FROM FUNDRAISER f " +
+      "JOIN CATEGORY c ON f.CATEGORY_ID = c.CATEGORY_ID " +
+      "WHERE f.ACTIVE = true " +
+      "AND f.CITY = ? " +
+      "AND c.NAME = ?";
     var parameters = [req.query.CITY, req.query.CATEGORY_NAME];
     // Search organizer, city and category
   } else {
 
-    var query = "SELECT f.*, c.NAME AS CATEGORY_NAME " + 
-                "FROM FUNDRAISER f " + 
-                "JOIN CATEGORY c ON f.CATEGORY_ID = c.CATEGORY_ID " + 
-                "WHERE f.ACTIVE = true " +  
-                "AND f.ORGANIZER = ? " + 
-                "AND f.CITY = ? " + 
-                "AND c.NAME = ?";
+    var query = "SELECT f.*, c.NAME AS CATEGORY_NAME " +
+      "FROM FUNDRAISER f " +
+      "JOIN CATEGORY c ON f.CATEGORY_ID = c.CATEGORY_ID " +
+      "WHERE f.ACTIVE = true " +
+      "AND f.ORGANIZER = ? " +
+      "AND f.CITY = ? " +
+      "AND c.NAME = ?";
     var parameters = [req.query.ORGANIZER, req.query.CITY, req.query.CATEGORY_NAME];
   }
 
@@ -190,5 +190,33 @@ router.post("/insert_fundraiser", (req, res) => {
       }
     })
 })
+
+
+router.put("/update_fundraiser/:id", (req, res) => {
+  // var fundraiserID = req.body.FUNDRAISER_ID;
+  var organizer = req.body.ORGANIZER;
+  var caption = req.body.CAPTION;
+  var targetFunding = req.body.TARGET_FUNDING;
+  var currentFunding = req.body.CURRENT_FUNDING;
+  var city = req.body.CITY;
+  var active = req.body.ACTIVE;
+  var categoryID = req.body.CATEGORY_ID;
+  connection.query("UPDATE FUNDRAISER SET ORGANIZER = '" + organizer + "', " +
+    "CAPTION = '" + caption + "', " +
+    "TARGET_FUNDING = " + targetFunding + ", " +
+    "CURRENT_FUNDING = " + currentFunding + ", " +
+    "CITY = '" + city + "', " +
+    "ACTIVE = '" + active + "', " +
+    "CATEGORY_ID = " + categoryID + " " +
+    "WHERE FUNDRAISER_ID = " + req.params.id
+    , (err, result) => {
+      if (err) {
+        console.error("Error while Updating the data" + err);
+      } else {
+        res.send({ update: "success" });
+      }
+    })
+})
+
 
 module.exports = router;
